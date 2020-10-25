@@ -58,7 +58,7 @@ public class ParkingDataBaseIT {
         ParkingSpot parkingSpot = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO).getNextParkingNumberIfAvailable();
         parkingService.processIncomingVehicle();
 
-        //assertEquals("check if parkingSpot is same as parkingService", parkingSpot, parkingService.getNextParkingNumberIfAvailable());
+        //assertEquals("check that a ticket is actually saved in DB and Parking table is updated with availability", parkingSpot, parkingService.getNextParkingNumberIfAvailable());
 
         System.out.println(parkingSpot);
         System.out.println(parkingService.getNextParkingNumberIfAvailable());
