@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Date;
+
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -40,8 +42,8 @@ public class ParkingDataBaseIT {
 
     @BeforeEach
     private void setUpPerTest() throws Exception {
+        ticket = new Ticket();
         when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
         dataBasePrepareService.clearDataBaseEntries();
     }
 
@@ -55,13 +57,22 @@ public class ParkingDataBaseIT {
         //TODO: check that a ticket is actually saved in DB and Parking table is updated with availability
 
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        ParkingSpot parkingSpot = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO).getNextParkingNumberIfAvailable();
+        ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
+
+        System.out.println("Test" + parkingSpot);
         parkingService.processIncomingVehicle();
+
+        /*ParkingSpot parkingSpot = new ParkingSpot(1,ParkingType.CAR, false);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+        ticket.setParkingSpot(parkingSpot);
+        ticket.setVehicleRegNumber("ABCDEF");
+        ticket.setPrice(0);
+        ticket.setInTime(new Date());
+        ticket.setId(0);
+        ticketDAO.saveTicket(ticket); */
 
         //assertEquals("check that a ticket is actually saved in DB and Parking table is updated with availability : ", parkingSpot, parkingService.getNextParkingNumberIfAvailable());
 
-        System.out.println(parkingSpot);
-        System.out.println(parkingService.getNextParkingNumberIfAvailable());
     }
 
     @Test

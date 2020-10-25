@@ -33,6 +33,7 @@ public class ParkingSpot {
         return isAvailable;
     }
 
+
     public void setAvailable(boolean available) {
         isAvailable = available;
     }
@@ -48,5 +49,14 @@ public class ParkingSpot {
     @Override
     public int hashCode() {
         return number;
+    }
+
+    @Override
+    public String toString() {
+        return "ParkingSpot{" +
+                "number=" + number +
+                ", parkingType=" + parkingType +
+                ", isAvailable=" + isAvailable +
+                '}';
     }
 }
