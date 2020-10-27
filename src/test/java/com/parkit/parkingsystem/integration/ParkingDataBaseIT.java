@@ -44,6 +44,7 @@ public class ParkingDataBaseIT {
     private void setUpPerTest() throws Exception {
         ticket = new Ticket();
         when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
         dataBasePrepareService.clearDataBaseEntries();
     }
 
@@ -57,22 +58,14 @@ public class ParkingDataBaseIT {
         //TODO: check that a ticket is actually saved in DB and Parking table is updated with availability
 
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
-
-        System.out.println("Test" + parkingSpot);
+        ParkingSpot parkingSpot = new ParkingSpot(2, ParkingType.CAR,true);
         parkingService.processIncomingVehicle();
-
-        /*ParkingSpot parkingSpot = new ParkingSpot(1,ParkingType.CAR, false);
-        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-        ticket.setParkingSpot(parkingSpot);
-        ticket.setVehicleRegNumber("ABCDEF");
-        ticket.setPrice(0);
         ticket.setInTime(new Date());
-        ticket.setId(0);
-        ticketDAO.saveTicket(ticket); */
+        ticket.setOutTime(new Date());
+        ticket.setParkingSpot(parkingSpot);
 
-        //assertEquals("check that a ticket is actually saved in DB and Parking table is updated with availability : ", parkingSpot, parkingService.getNextParkingNumberIfAvailable());
-
+        assertEquals("check that a ticket is actually saved in DB and Parking table is updated with availability : ",
+                parkingSpot, parkingService.getNextParkingNumberIfAvailable());
     }
 
     @Test
