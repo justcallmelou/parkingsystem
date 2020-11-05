@@ -67,13 +67,16 @@ public class ParkingDataBaseIT {
         parkingService.processIncomingVehicle();
         Connection con = null;
         Boolean isAvailable = null;
+        String vehicleRegNumber = null;
         try {
             con = dataBaseTestConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement("select p.AVAILABLE from parking p where p.PARKING_NUMBER = ?");
+            PreparedStatement ps = con.prepareStatement("select AVAILABLE, VEHICLE_REG_NUMBER from parking, ticket where parking.PARKING_NUMBER = ? AND OUT_TIME IS NULL AND VEHICLE_REG_NUMBER = ?");
             ps.setInt(1, parkingSpot.getId());
+            ps.setString(2, "ABCDEF");
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                isAvailable = rs.getBoolean(1);;
+                isAvailable = rs.getBoolean(1);
+                vehicleRegNumber = rs.getString(2);
             }
             dataBaseTestConfig.closeResultSet(rs);
             dataBaseTestConfig.closePreparedStatement(ps);
@@ -83,8 +86,8 @@ public class ParkingDataBaseIT {
             dataBaseTestConfig.closeConnection(con);
         }
         assertFalse(isAvailable);
-
-        String vehicleRegNumber = null;
+        assertEquals(vehicleRegNumber, "ABCDEF");
+        /*String vehicleRegNumber = null;
         try {
             con = dataBaseTestConfig.getConnection();
             PreparedStatement ps = con.prepareStatement("select VEHICLE_REG_NUMBER from ticket where out_time IS NULL AND PARKING_NUMBER = ? AND VEHICLE_REG_NUMBER = ?");
@@ -99,7 +102,7 @@ public class ParkingDataBaseIT {
         }finally {
             dataBaseTestConfig.closeConnection(con);
         }
-        assertEquals(vehicleRegNumber, "ABCDEF");
+        assertEquals(vehicleRegNumber, "ABCDEF"); */
     }
 
     @Test
@@ -110,27 +113,39 @@ public class ParkingDataBaseIT {
         Ticket ticket = new Ticket();
         parkingService.processExitingVehicle();
         Connection con = null;
+        String vehicleRegNumber = "ABCDEF";
         try {
             con = dataBaseTestConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement("select VEHICLE_REG_NUMBER from ticket where out_time IS NOT NULL AND update ticket set PRICE=?, OUT_TIME=?, ID=? ");
-            ps.setDouble(1, ticket.getPrice());
-            ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
-            ps.setInt(3, ticket.getId());
-            ps.execute();
+            PreparedStatement ps = con.prepareStatement("select ticket.PARKING_NUMBER, ID, PRICE, IN_TIME, OUT_TIME, TYPE from ticket, parking where parking.parking_number = ticket.parking_number and VEHICLE_REG_NUMBER=? order by IN_TIME  limit 1");
+            ps.setString(1,vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
+                ticket = new Ticket();
+                ticket.setId(rs.getInt(2));
+                ticket.setVehicleRegNumber(vehicleRegNumber);
                 ticket.setPrice(rs.getDouble(3));
+                ticket.setInTime(rs.getTimestamp(4));
                 ticket.setOutTime(rs.getTimestamp(5));
-
             }
         }catch (Exception ex){
             ex.printStackTrace();
         }finally {
             dataBaseTestConfig.closeConnection(con);
         }
-        assertEquals(0.00, ticket.getPrice());
+        /* try {
+            con = dataBaseTestConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement("update ticket set PRICE=?, OUT_TIME=? where ID=?");
+            ps.setDouble(1, ticket.getPrice());
+            ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
+            ps.setInt(3,ticket.getId());
+            ps.execute();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }finally {
+            dataBaseTestConfig.closeConnection(con);
+        } */
+        assertEquals(0.0, (ticket.getPrice()), 0.0);
 
     }
 
 }
-
