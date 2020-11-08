@@ -33,13 +33,13 @@ public class ParkingService {
             System.out.println("Service : " + parkingSpot);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
+                // TODO CHECK IF VEHICLE REG NUMBER EXISTS IN DB
+                ticketDAO.checkIfVehicleRegNumberExistsInDB(vehicleRegNumber); //check if vehicle reg number already exists in DB
                 parkingSpot.setAvailable(false);
                 parkingSpotDAO.updateParking(parkingSpot);//allot this parking space and mark it's availability as false
-
                 Date inTime = new Date();
                 Ticket ticket = new Ticket();
                 //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-                //ticket.setId(ticketID);
                 ticket.setParkingSpot(parkingSpot);
                 ticket.setVehicleRegNumber(vehicleRegNumber);
                 ticket.setPrice(0);
@@ -96,6 +96,18 @@ public class ParkingService {
                 throw new IllegalArgumentException("Entered input is invalid");
             }
         }
+    }
+    //TODO
+    private boolean vehicleRegNumberIsExistsInDB(boolean isExist) {
+        try {
+            String vehicleRegNumber = getVehichleRegNumber();
+            ticketDAO.checkIfVehicleRegNumberExistsInDB(vehicleRegNumber);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+
     }
 
     public void processExitingVehicle() {
