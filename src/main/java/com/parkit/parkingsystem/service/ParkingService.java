@@ -34,7 +34,9 @@ public class ParkingService {
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
                 // TODO CHECK IF VEHICLE REG NUMBER EXISTS IN DB
-                ticketDAO.checkIfVehicleRegNumberExistsInDB(vehicleRegNumber); //check if vehicle reg number already exists in DB
+                if (ticketDAO.isVehicleRegNumberExistsInDB(vehicleRegNumber)) {
+                    System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+                }
                 parkingSpot.setAvailable(false);
                 parkingSpotDAO.updateParking(parkingSpot);//allot this parking space and mark it's availability as false
                 Date inTime = new Date();
@@ -97,18 +99,6 @@ public class ParkingService {
             }
         }
     }
-    //TODO
-    private boolean vehicleRegNumberIsExistsInDB(boolean isExist) {
-        try {
-            String vehicleRegNumber = getVehichleRegNumber();
-            ticketDAO.checkIfVehicleRegNumberExistsInDB(vehicleRegNumber);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-
-    }
 
     public void processExitingVehicle() {
         try{
@@ -116,7 +106,11 @@ public class ParkingService {
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
-            fareCalculatorService.calculateFare(ticket);
+            if (ticketDAO.isVehicleRegNumberExistsInDB(vehicleRegNumber)) {
+                fareCalculatorService.calculDiscountForRecurringUsers(ticket);
+            } else {
+                fareCalculatorService.calculateFare(ticket);
+            }
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);

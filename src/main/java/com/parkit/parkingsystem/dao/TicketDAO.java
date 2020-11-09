@@ -95,8 +95,8 @@ public class TicketDAO {
             return ticket;
         }
     } */
-    public String checkIfVehicleRegNumberExistsInDB(String vehicleRegNumber ) {
-        boolean VehicleRegNumberIsAlreadyExists = false;
+    public boolean isVehicleRegNumberExistsInDB(String vehicleRegNumber ) {
+        boolean isExists = false;
         Connection con = null;
         Ticket ticket = null;
         try {
@@ -108,20 +108,18 @@ public class TicketDAO {
                 ticket = new Ticket();
                 ticket.setVehicleRegNumber(vehicleRegNumber);
                 vehicleRegNumber = rs.getString("VEHICLE_REG_NUMBER");
-                if (ticket.getVehicleRegNumber().equals(vehicleRegNumber))
-                    VehicleRegNumberIsAlreadyExists = true;
-                System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
-                } else {
-                System.out.println("Vehicle reg number is new in DB");
+                if (ticket.getVehicleRegNumber().equals(vehicleRegNumber)) {
+                    isExists = true;
+                }
             }
-                dataBaseConfig.closeResultSet(rs);
-                dataBaseConfig.closePreparedStatement(ps);
+            dataBaseConfig.closeResultSet(rs);
+            dataBaseConfig.closePreparedStatement(ps);
         }catch (Exception ex){
             logger.error("Error checking vehicle reg number",ex);
         }finally {
             dataBaseConfig.closeConnection(con);
         }
-        return vehicleRegNumber;
+        return isExists;
     }
 
 
