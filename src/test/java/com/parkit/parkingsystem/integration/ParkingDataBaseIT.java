@@ -132,20 +132,6 @@ public class ParkingDataBaseIT {
         }finally {
             dataBaseTestConfig.closeConnection(con);
         }
-        /* try {
-            con = dataBaseTestConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement("update ticket set PRICE=?, OUT_TIME=? where ID=?");
-            ps.setDouble(1, ticket.getPrice());
-            ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
-            ps.setInt(3,ticket.getId());
-            ps.execute();
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }finally {
-            dataBaseTestConfig.closeConnection(con);
-        } */
-        assertEquals(0.0, (ticket.getPrice()), 0.0);
-
+        assertEquals(0.0, (ticket.getPrice()));
     }
-
 }

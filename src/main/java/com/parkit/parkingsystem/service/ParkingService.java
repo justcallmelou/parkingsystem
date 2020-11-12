@@ -15,8 +15,7 @@ public class ParkingService {
 
     private static final Logger logger = LogManager.getLogger("ParkingService");
 
-    private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-
+    private FareCalculatorService fareCalculatorService;
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private  TicketDAO ticketDAO;
@@ -25,6 +24,7 @@ public class ParkingService {
         this.inputReaderUtil = inputReaderUtil;
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
+        this.fareCalculatorService = new FareCalculatorService(ticketDAO);
     }
 
     public void processIncomingVehicle() {
@@ -34,7 +34,7 @@ public class ParkingService {
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
                 // TODO CHECK IF VEHICLE REG NUMBER EXISTS IN DB
-                if (ticketDAO.isVehicleRegNumberExistsInDB(vehicleRegNumber)) {
+                if (ticketDAO.countTicketByVehicleRegNumber(vehicleRegNumber) > 0) {
                     System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
                 }
                 parkingSpot.setAvailable(false);
@@ -106,11 +106,7 @@ public class ParkingService {
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
-            if (ticketDAO.isVehicleRegNumberExistsInDB(vehicleRegNumber)) {
-                fareCalculatorService.calculDiscountForRecurringUsers(ticket);
-            } else {
-                fareCalculatorService.calculateFare(ticket);
-            }
+            fareCalculatorService.calculateFare(ticket);
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);

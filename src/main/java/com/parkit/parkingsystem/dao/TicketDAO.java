@@ -69,49 +69,18 @@ public class TicketDAO {
         }
     }
 
-    /* public Ticket getTicketByParkingSpotID(int parkingSpotID) {
+    public int countTicketByVehicleRegNumber(String vehicleRegNumber ) {
+        int count = 0;
         Connection con = null;
-        Ticket ticket = null;
         try {
             con = dataBaseConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET_BY_PARKING_SPOT_ID);
-            //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-            ps.setInt(1,parkingSpotID);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                ticket = new Ticket();
-                ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)),false);
-                ticket.setId(rs.getInt(2));
-                ticket.setPrice(rs.getDouble(3));
-                ticket.setInTime(rs.getTimestamp(4));
-                ticket.setOutTime(rs.getTimestamp(5));
-            }
-            dataBaseConfig.closeResultSet(rs);
-            dataBaseConfig.closePreparedStatement(ps);
-        }catch (Exception ex){
-            logger.error("Error fetching next available slot",ex);
-        }finally {
-            dataBaseConfig.closeConnection(con);
-            return ticket;
-        }
-    } */
-    public boolean isVehicleRegNumberExistsInDB(String vehicleRegNumber ) {
-        boolean isExists = false;
-        Connection con = null;
-        Ticket ticket = null;
-        try {
-            con = dataBaseConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement("select VEHICLE_REG_NUMBER from ticket where VEHICLE_REG_NUMBER=?");
+            PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKET_BY_VEHICLE_REG_NUMBER);
             ps.setString(1,vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
-                ticket = new Ticket();
-                ticket.setVehicleRegNumber(vehicleRegNumber);
-                vehicleRegNumber = rs.getString("VEHICLE_REG_NUMBER");
-                if (ticket.getVehicleRegNumber().equals(vehicleRegNumber)) {
-                    isExists = true;
-                }
+                count = rs.getInt(1);
             }
+            System.out.println(count);
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
         }catch (Exception ex){
@@ -119,10 +88,8 @@ public class TicketDAO {
         }finally {
             dataBaseConfig.closeConnection(con);
         }
-        return isExists;
+        return count;
     }
-
-
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
