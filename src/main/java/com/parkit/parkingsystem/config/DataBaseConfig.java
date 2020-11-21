@@ -24,9 +24,8 @@ public class DataBaseConfig {
 
         logger.info("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(appUrl, appUserName, appPass);
 
-        return  conn;
+        return  DriverManager.getConnection(appUrl, appUserName, appPass);
     }
 
     public void closeConnection(Connection con) {
