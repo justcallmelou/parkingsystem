@@ -5,6 +5,9 @@ import com.parkit.parkingsystem.constants.ParkingType;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Ticket class represents a ticket with different values : id, parking spot, vehicle reg number, price, in time and outime.
+ */
 public class Ticket {
     private int id;
     private ParkingSpot parkingSpot;
@@ -46,18 +49,19 @@ public class Ticket {
     }
 
     public Date getInTime() {
-        return inTime;
+        return this.inTime = inTime == null ? null : (Date) inTime.clone();
     }
 
     public void setInTime(Date inTime) {
-        this.inTime = inTime;
+        this.inTime = inTime == null ? null : (Date) inTime.clone();
     }
 
     public Date getOutTime() {
-        return outTime;
+        return this.outTime = outTime == null ? null : (Date) outTime.clone();
     }
 
     public void setOutTime(Date outTime) {
-        this.outTime = outTime;
+        this.outTime = outTime == null ? null : (Date) outTime.clone();
     }
+
 }
