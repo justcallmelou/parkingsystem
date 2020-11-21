@@ -23,10 +23,10 @@ public class FareCalculatorService {
             ticket.setPrice(0);
         } else {
             if (ticketDAO.countTicketByVehicleRegNumber(ticket.getVehicleRegNumber()) > 1 ){
-                // Calcul fare without discount
+                // Calculation fare without discount
                 calculateFare(ticket, duration * Fare.CAR_RATE_PER_HOUR, duration * Fare.BIKE_RATE_PER_HOUR);
             } else {
-                // Calcul fare with discount
+                // Calculation fare with discount
                 calculateFare(ticket, (duration * Fare.CAR_RATE_PER_HOUR) * 0.95, (duration * Fare.BIKE_RATE_PER_HOUR) * 0.95);
             }
         }

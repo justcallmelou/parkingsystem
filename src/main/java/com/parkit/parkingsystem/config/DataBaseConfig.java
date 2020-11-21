@@ -2,18 +2,32 @@ package com.parkit.parkingsystem.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 public class DataBaseConfig {
 
     private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
+    public Connection getConnection() throws ClassNotFoundException, SQLException, IOException {
+
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String appConfigPath = rootPath + "data.properties";
+
+        Properties appProps = new Properties();
+        appProps.load(new FileInputStream(appConfigPath));
+
+        String appUrl = appProps.getProperty("url", "url");
+        String appUserName = appProps.getProperty("username", "username");
+        String appPass = appProps.getProperty("pass", "pass");
+
         logger.info("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
-        return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/prod?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC","root","rootroot");
+        Connection conn = DriverManager.getConnection(appUrl, appUserName, appPass);
+
+        return conn;
     }
 
     public void closeConnection(Connection con){

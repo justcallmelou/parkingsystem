@@ -32,7 +32,7 @@ public class ParkingService {
             ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
-                // TODO CHECK IF VEHICLE REG NUMBER EXISTS IN DB
+                // CHECK IF VEHICLE REG NUMBER EXISTS IN DB
                 if (ticketDAO.countTicketByVehicleRegNumber(vehicleRegNumber) > 0) {
                     System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
                 }
