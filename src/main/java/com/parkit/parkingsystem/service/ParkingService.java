@@ -30,7 +30,6 @@ public class ParkingService {
     public void processIncomingVehicle() {
         try{
             ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
-            System.out.println("Service : " + parkingSpot);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
                 // TODO CHECK IF VEHICLE REG NUMBER EXISTS IN DB
