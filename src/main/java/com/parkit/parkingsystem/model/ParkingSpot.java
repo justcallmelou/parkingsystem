@@ -25,16 +25,13 @@ public class ParkingSpot {
      * @return Parking spot number
      */
     public int getId() {
-
         return number;
     }
-
 
     /**
      * @param number update parking spot number
      */
     public void setId(int number) {
-
         this.number = number;
     }
 
@@ -72,4 +69,5 @@ public class ParkingSpot {
     public int hashCode() {
         return number;
     }
+
 }

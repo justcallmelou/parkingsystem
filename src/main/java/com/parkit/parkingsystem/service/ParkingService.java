@@ -6,6 +6,7 @@ import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +30,7 @@ public class ParkingService {
      * @param inputReaderUtil gets users input
      * @param parkingSpotDAO  gets information of parking spot from DB
      * @param ticketDAO       gets information of ticket from the DB
-     * @see FareCalculatorService#calculateFareService(Ticket)
+     * @see FareCalculatorService #calculateFareService(Ticket)
      */
 
     public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
@@ -45,7 +46,7 @@ public class ParkingService {
             if (parkingSpot != null && parkingSpot.getId() > 0) {
                 String vehicleRegNumber = getVehicleRegNumber();
                 // CHECK IF VEHICLE REG NUMBER ALREADY EXISTS IN DB
-                if (ticketDAO.countTicketByVehicleRegNumber(vehicleRegNumber) > 0) {
+                if (ticketDAO.checkIfTicketByVehicleRegNumberExistsInDB(vehicleRegNumber) > 0) {
                     System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
                 }
                 parkingSpot.setAvailable(false);
@@ -89,7 +90,7 @@ public class ParkingService {
             if (parkingNumber > 0) {
                 parkingSpot = new ParkingSpot(parkingNumber, parkingType, true);
             } else {
-                throw new Exception("Error fetching parking number from DB. Parking slots might be full");
+                System.out.println("We are sorry but the parking might be full");
             }
         } catch (IllegalArgumentException ie) {
             logger.error("Error parsing user input for type of vehicle", ie);
@@ -129,7 +130,7 @@ public class ParkingService {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
                 parkingSpotDAO.updateParking(parkingSpot);
-                System.out.println("Please pay the parking fare:" + ticket.getPrice());
+                System.out.println("Please pay the parking fare:" + ticket.getPrice() + "EUR");
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
             } else {
                 System.out.println("Unable to update ticket information. Error occurred");
@@ -138,4 +139,5 @@ public class ParkingService {
             logger.error("Unable to process exiting vehicle", e);
         }
     }
+
 }

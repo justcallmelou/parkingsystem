@@ -28,12 +28,13 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
             //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-            //ps.setInt(1,ticket.getId());
             ps.setInt(1, ticket.getParkingSpot().getId());
             ps.setString(2, ticket.getVehicleRegNumber());
             ps.setDouble(3, ticket.getPrice());
+            //ps.setTimestamp(4, Timestamp.valueOf(ticket.getInTime()));
             ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
             ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
+            //ps.setTimestamp(5,Timestamp.valueOf(ticket.getOutTime()));
             ps.execute();
             ps.close();
             return true;
@@ -82,7 +83,7 @@ public class TicketDAO {
      * @param vehicleRegNumber vehicle reg number
      * @return count of ticket order by vehicle reg number
      */
-    public int countTicketByVehicleRegNumber(String vehicleRegNumber) {
+    public int checkIfTicketByVehicleRegNumberExistsInDB(String vehicleRegNumber) {
         int count = 0;
         Connection con = null;
         try {
@@ -93,7 +94,6 @@ public class TicketDAO {
             if (rs.next()) {
                 count = rs.getInt(1);
             }
-            System.out.println(count);
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
         } catch (Exception ex) {
@@ -122,4 +122,5 @@ public class TicketDAO {
         }
         return false;
     }
+
 }

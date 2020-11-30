@@ -23,8 +23,8 @@ public class FareCalculatorService {
         if (duration < 0.5) { // 0.5 = half and hour
             ticket.setPrice(0);
         } else {
-            if (ticketDAO.countTicketByVehicleRegNumber(ticket.getVehicleRegNumber()) > 0) {
-                // Calculate fare with discount
+            if (ticketDAO.checkIfTicketByVehicleRegNumberExistsInDB(ticket.getVehicleRegNumber()) > 0) {
+                // If vehicle reg number exists in DB, calculate fare with 5% discount
                 calculateTicketFare(ticket, duration * (Fare.CAR_RATE_PER_HOUR * 0.95), duration * (Fare.BIKE_RATE_PER_HOUR * 0.95));
             } else {
                 // Calculate fare without discount
@@ -52,4 +52,5 @@ public class FareCalculatorService {
                 throw new IllegalArgumentException("Unknown Parking Type");
         }
     }
+
 }

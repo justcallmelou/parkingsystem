@@ -13,11 +13,12 @@ public class DataBaseConfig {
     private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 
     public Connection getConnection() throws ClassNotFoundException, SQLException, IOException {
-
         String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         String appConfigPath = rootPath + "data.properties";
+
         Properties appProps = new Properties();
         appProps.load(new FileInputStream(appConfigPath));
+
         String appUrl = appProps.getProperty("url", "url");
         String appUserName = appProps.getProperty("username", "username");
         String appPass = appProps.getProperty("pass", "pass");
@@ -25,7 +26,7 @@ public class DataBaseConfig {
         logger.info("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
 
-        return  DriverManager.getConnection(appUrl, appUserName, appPass);
+        return DriverManager.getConnection(appUrl, appUserName, appPass);
     }
 
     public void closeConnection(Connection con) {
